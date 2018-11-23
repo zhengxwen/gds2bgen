@@ -1,0 +1,38 @@
+####################################################################
+###                          gds2bgen                            ###
+###                                                              ###
+
+# download the bgen library from https://bitbucket.org/gavinband/bgen
+BGEN_VERSION = gavinband-bgen-0b7a2803adb5
+
+# additional preprocessor options
+PKG_CPPFLAGS = -I$(BGEN_VERSION)/genfile/include -I$(BGEN_VERSION)/3rd_party/zstd-1.1.0/lib
+
+# to set flags for the linker
+PKG_LIBS = libbgen.a libzstd.a
+
+# using C++11
+CXX_STD = CXX11
+
+SOURCES = R_gds2bgen.c gds2bgen.cpp
+OBJECTS = R_gds2bgen.o gds2bgen.o
+
+
+all: $(SHLIB)
+
+$(SHLIB): libbgen.a
+
+
+libbgen.a:
+	tar -vxzf $(BGEN_VERSION).tar.gz
+	cd $(BGEN_VERSION); ./waf configure; ./waf
+	cp -f $(BGEN_VERSION)/build/libbgen.a .
+	cp -f $(BGEN_VERSION)/build/3rd_party/zstd-1.1.0/libzstd.a .
+	rm -rf $(BGEN_VERSION)/build
+
+
+clean:
+	rm -f $(OBJECTS)
+	rm -f libbgen.a
+	rm -f libzstd.a
+	rm -rf $(BGEN_VERSION)

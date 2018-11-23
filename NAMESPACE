@@ -1,0 +1,14 @@
+# Load the shared object
+useDynLib(gds2bgen,
+    SEQ_BGEN_Info, SEQ_BGEN_Import
+)
+
+# Export the following names
+export(
+    seqBGEN_Info, seqBGEN2GDS
+)
+
+# Import
+import(methods)
+import(gdsfmt)
+importFrom(SeqArray, seqStorageOption)
