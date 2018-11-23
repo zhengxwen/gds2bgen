@@ -11,7 +11,7 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
 
 \arguments{
     \item{bgen.fn}{the file name of a bgen file}
-    \item{verbose}{if TRUE, show information}
+    \item{verbose}{if \code{TRUE}, show information}
 }
 
 \details{
