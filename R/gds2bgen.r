@@ -88,7 +88,8 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     {
         cat(date(), "\n", sep="")
         cat("BGEN Import:\n")
-        cat("    file: ", bgen.fn, "\n", sep="")
+        cat("    file:", bgen.fn)
+        cat(" (", SeqArray:::.pretty_size(file.size(bgen.fn)), ")\n", sep="")
         cat("    # of samples: ", info$num.sample, "\n", sep="")
         cat("    # of variants: ", info$num.variant, "\n", sep="")
         cat("    compression method: ", info$compression, "\n", sep="")
