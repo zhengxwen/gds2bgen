@@ -1,8 +1,8 @@
 \name{seqBGEN_Info}
 \alias{seqBGEN_Info}
-\title{Add a new GDS node}
+\title{BGEN File Information}
 \description{
-    Add a new GDS node to the GDS file.
+    Gets the information of a bgen file.
 }
 
 \usage{
@@ -14,16 +14,13 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
     \item{verbose}{if \code{TRUE}, show information}
 }
 
-\details{
-    XX
-}
-
 \value{
     An object of class \code{\link{gdsn.class}} of the new node.
 }
 
 \references{
-    \url{http://github.com/zhengxwen/gdsfmt}
+    \url{https://bitbucket.org/gavinband/bgen},
+    \url{http://bgenformat.org}
 }
 \author{Xiuwen Zheng}
 \seealso{

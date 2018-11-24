@@ -22,6 +22,12 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
+#define class xclass
+#define private xprivate
+#include <R_ext/Connections.h>
+#undef class
+#undef private
+
 #include "genfile/bgen/bgen.hpp"
 #include <fstream>
 
@@ -109,7 +115,7 @@ class COREARRAY_DLL_LOCAL CProgress
 {
 public:
 	CProgress();
-	CProgress(C_Int64 count);
+	CProgress(C_Int64 count, SEXP conn);
 
 	void Reset(C_Int64 count);
 	void Forward(C_Int64 val);
@@ -122,6 +128,7 @@ protected:
 	C_Int64 _hit;
 	vector< pair<double, time_t> > _timer;
 	time_t _start_time, _last_time, _last_check_time;
+	Rconnection progress_conn;
 };
 
 static const int PROGRESS_BAR_CHAR_NUM = 50;
@@ -161,17 +168,28 @@ static bool CheckInterrupt()
 	return (R_ToplevelExec(chkIntFn, NULL) == FALSE);
 }
 
+inline static void put_text(Rconnection conn, const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	(*conn->vfprintf)(conn, fmt, args);
+	va_end(args);
+}
+
+
 
 CProgress::CProgress()
 {
 	fTotalCount = 0;
 	fCounter = 0;
+	progress_conn = NULL;
 }
 
-CProgress::CProgress(C_Int64 count)
+CProgress::CProgress(C_Int64 count, SEXP conn)
 {
 	fTotalCount = 0;
 	fCounter = 0;
+	progress_conn = (!conn || Rf_isNull(conn)) ? NULL : R_GetConnection(conn);
 	Reset(count);
 }
 
@@ -257,10 +275,16 @@ void CProgress::ShowProgress()
 		if (fCounter >= fTotalCount)
 		{
 			s = difftime(_last_time, _start_time);
-			Rprintf("\r[%s] 100%%, completed in %s\n", bar, time_str(s));
+			if (!progress_conn)
+				Rprintf("\r[%s] 100%%, completed in %s\n", bar, time_str(s));
+			else
+				put_text(progress_conn, "[%s] 100%%, completed in %s\n", bar, time_str(s));
 		} else if ((interval >= 5) || (fCounter <= 0))
 		{
-			Rprintf("\r[%s] %2.0f%%, ETC: %s        ", bar, p, time_str(s));
+			if (!progress_conn)
+				Rprintf("\r[%s] %2.0f%%, ETC: %s        ", bar, p, time_str(s));
+			else
+				put_text(progress_conn, "[%s] %2.0f%%, ETC: %s\n", bar, p, time_str(s));
 			// fflush(stdout);
 		}
 	}
@@ -338,7 +362,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Info(SEXP bgen_fn)
 
 /// get the info of bgen file
 COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
-	SEXP Start, SEXP Count, SEXP Verbose)
+	SEXP Start, SEXP Count, SEXP progfile, SEXP Verbose)
 {
 	const char *filename = CHAR(STRING_ELT(bgen_fn, 0));
 	int start = Rf_asInteger(Start);
@@ -409,7 +433,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 		double F64;
 		vector<double> F64s(nSamp);
 		// progress information
-		CProgress prog(verbose==TRUE ? count : -1);
+		CProgress prog((verbose || !Rf_isNull(progfile)) ? count : -1, progfile);
 
 		// for-loop
 		for (size_t idx=start; count > 0; idx++, count--)
@@ -507,7 +531,7 @@ COREARRAY_DLL_EXPORT void R_init_gds2bgen(DllInfo *info)
 	static R_CallMethodDef callMethods[] =
 	{
 		CALL(SEQ_BGEN_Info, 1),
-		CALL(SEQ_BGEN_Import, 5),
+		CALL(SEQ_BGEN_Import, 6),
 		{ NULL, NULL, 0 }
 	};
 	R_registerRoutines(info, NULL, callMethods, NULL, NULL);

@@ -48,11 +48,12 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
 }
 
 \references{
-    \url{http://github.com/zhengxwen/gdsfmt}
+    \url{https://bitbucket.org/gavinband/bgen},
+    \url{http://bgenformat.org}
 }
 \author{Xiuwen Zheng}
 \seealso{
-    \code{\link{seqBGEN2GDS}}
+    \code{\link{seqBGEN_Info}}
 }
 
 \examples{

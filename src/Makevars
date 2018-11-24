@@ -18,19 +18,18 @@ SOURCES = R_gds2bgen.c gds2bgen.cpp
 OBJECTS = R_gds2bgen.o gds2bgen.o
 
 
-genfile/bgen/bgen.hpp: libbgen.a
+all: $(SHLIB)
+
+$(SHLIB): libbgen.a
+
 
 libbgen.a:
 	tar -vxzf $(BGEN_VERSION).tar.gz
-	cd $(BGEN_VERSION); ./waf configure; ./waf
+	cd $(BGEN_VERSION); ./waf configure CC="${CC}" CPP="${CPP}" CXX="${CXX}" CXXCPP="${CXXCPP}"; ./waf
 	cp -f $(BGEN_VERSION)/build/libbgen.a .
 	cp -f $(BGEN_VERSION)/build/3rd_party/zstd-1.1.0/libzstd.a .
 	rm -rf $(BGEN_VERSION)/build
 
-
-all: $(SHLIB)
-
-$(SHLIB): genfile/bgen/bgen.hpp libbgen.a
 
 clean:
 	rm -f $(OBJECTS)

@@ -158,9 +158,10 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
                 bgen.fn, storage.option, float.type, dosage, prob,
                 optim, ptmpfn, psplit, verbose)
             {
-                library("gds2bgen")
+                library("gds2bgen", quietly=TRUE)
                 # the process id, starting from one
                 i <- SeqArray:::process_index
+                attr(bgen.fn, "progress") <- TRUE
                 seqBGEN2GDS(bgen.fn, ptmpfn[i], storage.option=storage.option,
                     float.type=float.type, dosage=dosage, prob=prob,
                     start=psplit[[1L]][i], count=psplit[[2L]][i],
@@ -267,8 +268,19 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
 
     if (pnum <= 1L)
     {
+        if (isTRUE(attr(bgen.fn, "progress")))
+        {
+            progfile <- file(paste0(out.fn, ".progress"), "wt")
+            on.exit({
+                close(progfile)
+                unlink(paste0(out.fn, ".progress"), force=TRUE)
+            }, add=TRUE)
+        } else {
+            progfile <- NULL
+        }
         # call C function
-        .Call(SEQ_BGEN_Import, bgen.fn, gfile$root, start, count, verbose)
+        .Call(SEQ_BGEN_Import, bgen.fn, gfile$root, start, count, progfile,
+            verbose)
     } else {
         ## merge all temporary files
         varnm <- c("variant.id", "position", "chromosome", "allele",

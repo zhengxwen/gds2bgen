@@ -3,7 +3,7 @@ Type: Package
 Title: Format Conversion Between GDS and BGEN
 Version: 0.9.0
 Date: 2018-11-20
-Depends: R (>= 2.15.0), methods, gdsfmt
+Depends: R (>= 3.3.0), methods, gdsfmt
 Imports: SeqArray
 LinkingTo: gdsfmt
 Suggests: parallel, digest, crayon, RUnit, knitr, BiocGenerics
