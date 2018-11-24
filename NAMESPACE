@@ -11,4 +11,4 @@ export(
 # Import
 import(methods)
 import(gdsfmt)
-importFrom(SeqArray, seqStorageOption)
+importFrom(SeqArray, seqStorageOption, seqParallel)

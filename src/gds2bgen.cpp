@@ -338,9 +338,12 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Info(SEXP bgen_fn)
 
 /// get the info of bgen file
 COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
-	SEXP Verbose)
+	SEXP Start, SEXP Count, SEXP Verbose)
 {
 	const char *filename = CHAR(STRING_ELT(bgen_fn, 0));
+	int start = Rf_asInteger(Start);
+	if (start < 1) start = 1;
+	int count = Rf_asInteger(Count);
 	int verbose = Rf_asLogical(Verbose);
 	if (verbose == NA_LOGICAL)
 		error("'verbose' must be TRUE or FALSE.");
@@ -383,18 +386,33 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 		string chr, snpid, rsid, s;
 		uint32_t position;
 		vector<string> alleles;
-		vector<vector<double>> probs;
+
+		// skip
+		for (int idx=1; idx < start; idx++)
+		{
+			bgen::read_snp_identifying_data(m_stream, m_context,
+				&snpid, &rsid, &chr, &position,
+				[&alleles](size_t n) { alleles.resize(n); },
+				[&alleles](size_t i, string const& allele) { alleles.at(i) = allele; }
+			);
+			bgen::ignore_genotype_data_block(m_stream, m_context);
+		}
+		// the number of variants computed
+		if (count < 0)
+			count = m_context.number_of_variants - start + 1;
+
 		// buffers, these are used as working space by bgen implementation
+		vector<vector<double>> probs;
 		vector<genfile::byte_t> m_buffer1, m_buffer2 ;
 		const size_t nSamp = m_context.number_of_samples;
 		C_Int32 I32;
 		double F64;
 		vector<double> F64s(nSamp);
 		// progress information
-		CProgress prog(verbose==TRUE ? m_context.number_of_variants : -1);
+		CProgress prog(verbose==TRUE ? count : -1);
 
 		// for-loop
-		for (size_t idx=1; idx <= m_context.number_of_variants; idx++)
+		for (size_t idx=start; count > 0; idx++, count--)
 		{
 			bgen::read_snp_identifying_data(m_stream, m_context,
 				&snpid, &rsid, &chr, &position,
@@ -431,7 +449,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 			bgen::read_and_parse_genotype_data_block<ProbSetter>(m_stream,
 				m_context, setter, &m_buffer1, &m_buffer2);
 
-			// dosage
+			// dosages
 			if (varDS)
 			{
 				// write dosages
@@ -449,7 +467,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 				GDS_Array_AppendData(varDSLen, 1, &I32, svInt32);
 			}
 
-			// genotype probabilit
+			// genotype probabilities
 			if (varGP)
 			{
 				// find the max length
@@ -489,7 +507,7 @@ COREARRAY_DLL_EXPORT void R_init_gds2bgen(DllInfo *info)
 	static R_CallMethodDef callMethods[] =
 	{
 		CALL(SEQ_BGEN_Info, 1),
-		CALL(SEQ_BGEN_Import, 3),
+		CALL(SEQ_BGEN_Import, 5),
 		{ NULL, NULL, 0 }
 	};
 	R_registerRoutines(info, NULL, callMethods, NULL, NULL);

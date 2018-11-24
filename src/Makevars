@@ -18,10 +18,7 @@ SOURCES = R_gds2bgen.c gds2bgen.cpp
 OBJECTS = R_gds2bgen.o gds2bgen.o
 
 
-all: $(SHLIB)
-
-$(SHLIB): libbgen.a
-
+genfile/bgen/bgen.hpp: libbgen.a
 
 libbgen.a:
 	tar -vxzf $(BGEN_VERSION).tar.gz
@@ -30,6 +27,10 @@ libbgen.a:
 	cp -f $(BGEN_VERSION)/build/3rd_party/zstd-1.1.0/libzstd.a .
 	rm -rf $(BGEN_VERSION)/build
 
+
+all: $(SHLIB)
+
+$(SHLIB): genfile/bgen/bgen.hpp libbgen.a
 
 clean:
 	rm -f $(OBJECTS)

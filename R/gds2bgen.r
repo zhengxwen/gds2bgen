@@ -79,6 +79,8 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
 
     stopifnot(is.logical(dosage), length(dosage)==1L)
     stopifnot(is.logical(prob), length(prob)==1L)
+    stopifnot(is.numeric(start), length(start)==1L)
+    stopifnot(is.numeric(count), length(count)==1L)
 
 
     # get bgen info
@@ -108,12 +110,80 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
         flush.console()
     }
 
+    # the number of samples and variants
     nSamp <- info$num.sample
+    nVariant <- info$num.variant
     if (nSamp <= 0L)
         stop("No sample in the bgen file.")
 
-    # create a GDS file
+    # the number of parallel tasks
+    pnum <- SeqArray:::.NumParallel(parallel)
+    if (pnum > 1L)
+    {
+        if (start < 1L)
+            stop("'start' should be a positive integer if conversion in parallel.")
+        else if (start > nVariant)
+            stop("'start' should not be greater than the total number of variants.")
+        if (count < 0L)
+            count <- nVariant - start + 1L
+        if (start+count > nVariant+1L)
+            stop("Invalid 'count'.")
 
+        if (count >= pnum)
+        {
+            fn <- basename(sub("^([^.]*).*", "\\1", out.fn))
+            psplit <- .Call(SeqArray:::SEQ_VCF_Split, start, count, pnum)
+
+            # need unique temporary file names
+            ptmpfn <- character()
+            while (length(ptmpfn) < pnum)
+            {
+                s <- tempfile(pattern=sprintf("%s_tmp%02d_",
+                    fn, length(ptmpfn)+1L), tmpdir=dirname(out.fn))
+                file.create(s)
+                if (!(s %in% ptmpfn)) ptmpfn <- c(ptmpfn, s)
+            }
+            if (verbose)
+            {
+                cat(sprintf("    Writing to %d files:\n", pnum))
+                cat(sprintf("        %s [%s..%s]\n", basename(ptmpfn),
+                    SeqArray:::.pretty(psplit[[1L]]),
+                    SeqArray:::.pretty(psplit[[1L]] + psplit[[2L]] - 1L)),
+                    sep="")
+                flush.console()
+            }
+
+            # conversion in parallel
+            seqParallel(parallel, NULL, FUN = function(
+                bgen.fn, storage.option, float.type, dosage, prob,
+                optim, ptmpfn, psplit, verbose)
+            {
+                library("gds2bgen")
+                # the process id, starting from one
+                i <- SeqArray:::process_index
+                seqBGEN2GDS(bgen.fn, ptmpfn[i], storage.option=storage.option,
+                    float.type=float.type, dosage=dosage, prob=prob,
+                    start=psplit[[1L]][i], count=psplit[[2L]][i],
+                    optimize=optim, digest=FALSE, parallel=FALSE,
+                    verbose=FALSE)
+                invisible()
+            }, split="none",
+                bgen.fn=bgen.fn, storage.option=storage.option,
+                float.type=float.type, dosage=dosage, prob=prob,
+                optim=optimize, ptmpfn=ptmpfn, psplit=psplit, verbose=verbose
+            )
+
+            if (verbose)
+                cat("    Done (", date(), ").\n", sep="")
+
+        } else {
+            pnum <- 1L
+            message("No use of parallel environment!")
+        }
+    }
+
+
+    # create a GDS file
     gfile <- createfn.gds(out.fn)
     on.exit({ if (!is.null(gfile)) closefn.gds(gfile) })
     if (verbose)
@@ -178,6 +248,8 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
             valdim=c(nSamp, 0L))
         SeqArray:::.AddVar(storage.option, DS, "@data", storage="int32",
             visible=FALSE)
+        if (verbose)
+            cat("    (writing to 'annotation/format/DS')\n")
     }
     if (prob)
     {
@@ -189,10 +261,50 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
             valdim=c(nSamp, 0L))
         SeqArray:::.AddVar(storage.option, GP, "@data", storage="int32",
             visible=FALSE)
+        if (verbose)
+            cat("    (writing to 'annotation/format/GP')\n")
     }
 
-    # call C function
-    .Call(SEQ_BGEN_Import, bgen.fn, gfile$root, verbose)
+    if (pnum <= 1L)
+    {
+        # call C function
+        .Call(SEQ_BGEN_Import, bgen.fn, gfile$root, start, count, verbose)
+    } else {
+        ## merge all temporary files
+        varnm <- c("variant.id", "position", "chromosome", "allele",
+            "annotation/id", "annotation/qual", "annotation/filter")
+        if (dosage)
+        {
+            varnm <- c(varnm, c("annotation/format/DS/data",
+                "annotation/format/DS/@data"))
+        }
+        if (prob)
+        {
+            varnm <- c(varnm, c("annotation/format/GP/data",
+                "annotation/format/GP/@data"))
+        }
+
+        if (verbose) cat("Merging:\n")
+
+        # open all temporary files
+        for (fn in ptmpfn)
+        {
+            if (verbose)
+                cat("    opening '", basename(fn), "' ...", sep="")
+            # open the gds file
+            tmpgds <- openfn.gds(fn)
+            # merge variables
+            for (nm in varnm)
+                append.gdsn(index.gdsn(gfile, nm), index.gdsn(tmpgds, nm))
+            # close the file
+            closefn.gds(tmpgds)
+            if (verbose) cat(" [done]\n")
+        }
+
+        # remove temporary files
+        unlink(ptmpfn, force=TRUE)
+    }
+
 
     # add annotation folder
     addfolder.gdsn(gfile, "sample.annotation")
