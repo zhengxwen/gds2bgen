@@ -18,14 +18,16 @@ SOURCES = R_gds2bgen.c gds2bgen.cpp
 OBJECTS = R_gds2bgen.o gds2bgen.o
 
 
-all: $(SHLIB)
+all: $(BGEN_VERSION) $(SHLIB)
 
-$(SHLIB): libbgen.a
+$(BGEN_VERSION):
+	tar -vxzf $(BGEN_VERSION).tar.gz
+
+$(SHLIB): libbgen.a libzstd.a
 
 
 libbgen.a:
-	tar -vxzf $(BGEN_VERSION).tar.gz
-	cd $(BGEN_VERSION); ./waf configure CC="${CC}" CPP="${CPP}" CXX="${CXX}" CXXCPP="${CXXCPP}"; ./waf
+	cd $(BGEN_VERSION) && ./waf configure && ./waf
 	cp -f $(BGEN_VERSION)/build/libbgen.a .
 	cp -f $(BGEN_VERSION)/build/3rd_party/zstd-1.1.0/libzstd.a .
 	rm -rf $(BGEN_VERSION)/build
