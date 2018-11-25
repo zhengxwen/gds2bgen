@@ -277,14 +277,18 @@ void CProgress::ShowProgress()
 			s = difftime(_last_time, _start_time);
 			if (!progress_conn)
 				Rprintf("\r[%s] 100%%, completed in %s\n", bar, time_str(s));
-			else
+			else {
 				put_text(progress_conn, "[%s] 100%%, completed in %s\n", bar, time_str(s));
+				(*progress_conn->fflush)(progress_conn);
+			}
 		} else if ((interval >= 5) || (fCounter <= 0))
 		{
 			if (!progress_conn)
 				Rprintf("\r[%s] %2.0f%%, ETC: %s        ", bar, p, time_str(s));
-			else
+			else {
 				put_text(progress_conn, "[%s] %2.0f%%, ETC: %s\n", bar, p, time_str(s));
+				(*progress_conn->fflush)(progress_conn);
+			}
 			// fflush(stdout);
 		}
 	}
