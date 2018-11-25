@@ -55,7 +55,7 @@ seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
 # Format conversion from BGEN to GDS
 #
 seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
-    float.type=c("packed16", "packed8", "single", "double"),
+    float.type=c("packed8", "packed16", "single", "double"),
     dosage=FALSE, prob=TRUE, start=1L, count=-1L,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 {
@@ -66,13 +66,19 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     if (is.character(storage.option))
     {
         storage.option <- seqStorageOption(storage.option)
-        s <- switch(float.type,
-            packed16 = "packedreal16:offset=0,scale=0.0001",
-            packed8  = "packedreal8:offset=0,scale=0.01",
+        s1 <- switch(float.type,
+            packed8  = "packedreal8:offset=1,scale=1/127",
+            packed16 = "packedreal16:offset=1,scale=1/32767",
+            single   = "float32",
+            double   = "float64")
+        s2 <- switch(float.type,
+            packed8  = "packedreal8:offset=127/254,scale=1/254",
+            packed16 = "packedreal16:offset=32767/65534,scale=1/65534",
             single   = "float32",
             double   = "float64")
 		storage.option$mode <- c(
-			`annotation/format/DS`=s, `annotation/format/GP`=s
+			`annotation/format/DS`=s1,
+			`annotation/format/GP`=s2
 		)
     }
     stopifnot(inherits(storage.option, "SeqGDSStorageClass"))
