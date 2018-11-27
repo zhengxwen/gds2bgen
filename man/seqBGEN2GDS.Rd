@@ -7,7 +7,7 @@
 
 \usage{
 seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
-    float.type=c("packed16", "packed8", "single", "double"),
+    float.type=c("packed8", "packed16", "single", "double"),
     dosage=FALSE, prob=TRUE, start=1L, count=-1L,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 }

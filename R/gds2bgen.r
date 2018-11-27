@@ -55,7 +55,7 @@ seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
 # Format conversion from BGEN to GDS
 #
 seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
-    float.type=c("packed16", "packed8", "single", "double"),
+    float.type=c("packed8", "packed16", "single", "double"),
     dosage=FALSE, prob=TRUE, start=1L, count=-1L,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 {
@@ -138,7 +138,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
         if (count >= pnum)
         {
             fn <- basename(sub("^([^.]*).*", "\\1", out.fn))
-            psplit <- .Call(SeqArray:::SEQ_VCF_Split, start, count, pnum)
+            psplit <- SeqArray:::.file_split(count, pnum, start, FALSE)
 
             # need unique temporary file names
             ptmpfn <- character()

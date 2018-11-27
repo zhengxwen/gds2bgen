@@ -24,6 +24,21 @@ install_github("zhengxwen/gds2bgen")
 ```
 The `install_github()` approach requires that you build from source, i.e. `make` and compilers must be installed on your system -- see the [R FAQ](http://cran.r-project.org/faqs.html) for your operating system; you may also need to install dependencies manually.
 
+Or manually intall the package
+```
+git clone https://github.com/zhengxwen/gds2bgen
+cd gds2bgen/src
+tar -vxzf gavinband-bgen-0b7a2803adb5.tar.gz
+cd gavinband-bgen-0b7a2803adb5
+./waf configure
+./waf
+cp build/libbgen.a ..
+cp build/3rd_party/zstd-1.1.0/libzstd.a ..
+rm -rf build
+cd ../../..
+R CMD INSTALL gds2bgen
+```
+
 
 ## Copyright Notice
 
@@ -43,6 +58,12 @@ Zheng X, Gogarten S, Lawrence M, Stilp A, Conomos M, Weir BS, Laurie C, Levine D
 
 ```R
 library(gds2bgen)
+
+bgen_fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
+
+seqBGEN_Info(bgen_fn)
+
+seqBGEN2GDS(bgen_fn, "example.gds")
 ```
 
 
