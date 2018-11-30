@@ -67,10 +67,29 @@ seqBGEN2GDS(bgen_fn, "example.gds", parallel=4)
 
 
 library(SeqArray)
-
 (f <- seqOpen("example.gds"))
-
 seqClose(f)
+```
+```
+File: example.gds (81.2K)
++    [  ] *
+|--+ description   [  ] *
+|--+ sample.id   { Str8 500 LZMA_ra(7.02%), 393B } *
+|--+ variant.id   { Int32 199 LZMA_ra(33.9%), 277B } *
+|--+ position   { Int32 199 LZMA_ra(60.6%), 489B } *
+|--+ chromosome   { Str8 199 LZMA_ra(15.7%), 101B } *
+|--+ allele   { Str8 199 LZMA_ra(11.8%), 101B } *
+|--+ genotype   [  ] *
+|--+ phase   [  ]
+|--+ annotation   [  ]
+|  |--+ id   { Str8 199 LZMA_ra(18.6%), 321B } *
+|  |--+ qual   { Float32 199 LZMA_ra(11.8%), 101B } *
+|  |--+ filter   { Int32 199 LZMA_ra(11.3%), 97B } *
+|  |--+ info   [  ]
+|  \--+ format   [  ]
+|     \--+ GP   [  ] *
+|        \--+ data   { PackedReal8U 500x398 LZMA_ra(38.8%), 75.3K } *
+\--+ sample.annotation   [  ]
 ```
 
 
