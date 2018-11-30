@@ -151,7 +151,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
             }
             if (verbose)
             {
-                cat(sprintf("    Writing to %d files:\n", pnum))
+                cat(sprintf("    writing to %d files:\n", pnum))
                 cat(sprintf("        %s [%s..%s]\n", basename(ptmpfn),
                     SeqArray:::.pretty(psplit[[1L]]),
                     SeqArray:::.pretty(psplit[[1L]] + psplit[[2L]] - 1L)),
@@ -264,7 +264,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
         put.attr.gdsn(GP, "Number", ".")
         put.attr.gdsn(GP, "Type", "Float")
         put.attr.gdsn(GP, "Description",
-            "Genotype probabilities (not storing prob. of ref. homozygous geno.)")
+            "Genotype probabilities (no prob of ref homozygous geno)")
         SeqArray:::.AddVar(storage.option, GP, "data", storage="float",
             valdim=c(nSamp, 0L))
         SeqArray:::.AddVar(storage.option, GP, "@data", storage="int32",
