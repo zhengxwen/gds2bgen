@@ -57,8 +57,6 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
 }
 
 \examples{
-library(gds2bgen)
-
 bgen.fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
 
 seqBGEN2GDS(bgen.fn, "test.gds")

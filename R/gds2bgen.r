@@ -67,13 +67,13 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     {
         storage.option <- seqStorageOption(storage.option)
         s1 <- switch(float.type,
-            packed8  = "packedreal8:offset=1,scale=1/127",
-            packed16 = "packedreal16:offset=1,scale=1/32767",
+            packed8  = "packedreal8u:offset=0,scale=1/127",
+            packed16 = "packedreal16u:offset=0,scale=1/32767",
             single   = "float32",
             double   = "float64")
         s2 <- switch(float.type,
-            packed8  = "packedreal8:offset=127/254,scale=1/254",
-            packed16 = "packedreal16:offset=32767/65534,scale=1/65534",
+            packed8  = "packedreal8u:offset=0,scale=1/254",
+            packed16 = "packedreal16u:offset=0,scale=1/65534",
             single   = "float32",
             double   = "float64")
 		storage.option$mode <- c(
@@ -263,7 +263,8 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
         GP <- addfolder.gdsn(varFormat, "GP")
         put.attr.gdsn(GP, "Number", ".")
         put.attr.gdsn(GP, "Type", "Float")
-        put.attr.gdsn(GP, "Description", "Genotype probabilities")
+        put.attr.gdsn(GP, "Description",
+            "Genotype probabilities (not storing prob. of ref. homozygous geno.)")
         SeqArray:::.AddVar(storage.option, GP, "data", storage="float",
             valdim=c(nSamp, 0L))
         SeqArray:::.AddVar(storage.option, GP, "@data", storage="int32",

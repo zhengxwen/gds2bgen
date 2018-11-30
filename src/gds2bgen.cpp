@@ -506,8 +506,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 						max_len = probs[i].size();
 				}
 				// write prob
-				if (max_len >= 2) max_len--;
-				for (size_t j=0; j < max_len; j++)
+				for (size_t j=(max_len>=2)?1:0; j < max_len; j++)
 				{
 					for (size_t i=0; i < nSamp; i++)
 					{

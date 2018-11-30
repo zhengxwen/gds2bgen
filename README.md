@@ -7,7 +7,7 @@ gds2bgen: Format Conversion Between GDS and BGEN
 
 ## Description
 
-This package provides functions for format conversion between [bgen](http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html) files to [SeqArray](https://github.com/zhengxwen/SeqArray) GDS files.
+This package provides functions for format conversion between [bgen](http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html) files to [SeqArray GDS](https://github.com/zhengxwen/SeqArray) files.
 
 
 ## Package Maintainer
@@ -25,7 +25,7 @@ install_github("zhengxwen/gds2bgen")
 The `install_github()` approach requires that you build from source, i.e. `make` and compilers must be installed on your system -- see the [R FAQ](http://cran.r-project.org/faqs.html) for your operating system; you may also need to install dependencies manually.
 
 Or manually intall the package
-```
+```sh
 git clone https://github.com/zhengxwen/gds2bgen
 cd gds2bgen/src
 tar -vxzf gavinband-bgen-0b7a2803adb5.tar.gz
@@ -60,10 +60,17 @@ Zheng X, Gogarten S, Lawrence M, Stilp A, Conomos M, Weir BS, Laurie C, Levine D
 library(gds2bgen)
 
 bgen_fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
-
 seqBGEN_Info(bgen_fn)
 
-seqBGEN2GDS(bgen_fn, "example.gds")
+# example.8bits.bgen ==> example.gds, using 4 cores
+seqBGEN2GDS(bgen_fn, "example.gds", parallel=4)
+
+
+library(SeqArray)
+
+(f <- seqOpen("example.gds"))
+
+seqClose(f)
 ```
 
 

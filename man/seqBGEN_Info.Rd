@@ -15,7 +15,7 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
 }
 
 \value{
-    An object of class \code{\link{gdsn.class}} of the new node.
+    None.
 }
 
 \references{
@@ -28,9 +28,8 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
 }
 
 \examples{
-
-# delete the temporary file
-unlink("test.gds", force=TRUE)
+bgen.fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
+seqBGEN_Info(bgen.fn)
 }
 
 \keyword{GDS}
