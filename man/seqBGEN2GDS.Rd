@@ -18,10 +18,11 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
     \item{storage.option}{specify the storage and compression option,
         "ZIP_RA" (\code{\link{seqStorageOption}("ZIP_RA")}); or
         "LZMA_RA" to use LZMA compression algorithm with higher compression
-        ratio by default; "ZIP_RA.max" and "LZMA_RA.max" correspond to the
-        algorithms with a maximum compression level; the suffix "_RA" indicates
-        that fine-level random access is available; see more details at
-        \code{\link{seqStorageOption}}}
+        ratio by default; or "LZ4_RA" to use an extremely fast compression and
+        decompression algorithm. "ZIP_RA.max", "LZMA_RA.max" and "LZ4_RA.max"
+        correspond to the algorithms with a maximum compression level; the
+        suffix "_RA" indicates that fine-level random access is available; see
+        more details at \code{\link{seqStorageOption}}}
     \item{float.type}{XX}
     \item{start}{the starting variant if importing part of VCF files}
     \item{count}{the maximum count of variant if importing part of VCF files,

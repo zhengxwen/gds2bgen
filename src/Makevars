@@ -26,7 +26,7 @@ $(BGEN_VERSION):
 $(SHLIB): libbgen.a libzstd.a
 
 
-libbgen.a:
+libbgen.a: $(BGEN_VERSION)
 	cd $(BGEN_VERSION) && ./waf configure && ./waf
 	cp -f $(BGEN_VERSION)/build/libbgen.a .
 	cp -f $(BGEN_VERSION)/build/3rd_party/zstd-1.1.0/libzstd.a .
