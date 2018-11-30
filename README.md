@@ -62,8 +62,16 @@ library(gds2bgen)
 bgen_fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
 seqBGEN_Info(bgen_fn)
 
+## bgen file: gds2bgen/extdata/example.8bits.bgen
+## # of samples: 500
+## # of variants: 199
+## compression method: zlib
+## layout version: v1.2
+## sample id: sample_001, sample_002, sample_003, sample_004, ...
+
+
 # example.8bits.bgen ==> example.gds, using 4 cores
-seqBGEN2GDS(bgen_fn, "example.gds", parallel=4)
+seqBGEN2GDS(bgen_fn, "example.gds", float.type="packed8", parallel=4)
 
 
 library(SeqArray)
