@@ -56,7 +56,7 @@ seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
 #
 seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     float.type=c("packed8", "packed16", "single", "double"),
-    dosage=FALSE, prob=TRUE, start=1L, count=-1L,
+    dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 {
     stopifnot(is.character(bgen.fn), length(bgen.fn)==1L)
@@ -121,6 +121,17 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     nVariant <- info$num.variant
     if (nSamp <= 0L)
         stop("No sample in the bgen file.")
+    if (!is.null(sample.id))
+    {
+        stopifnot(is.vector(sample.id))
+        if (length(sample.id) != nSamp)
+        {
+            stop(sprintf(
+                "'sample.id' should have the same length as the bgen file (# %d).",
+                nSamp))
+        }
+        info$sample.id <- sample.id
+    }
 
     # the number of parallel tasks
     pnum <- SeqArray:::.NumParallel(parallel)

@@ -8,7 +8,7 @@
 \usage{
 seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
     float.type=c("packed8", "packed16", "single", "double"),
-    dosage=FALSE, prob=TRUE, start=1L, count=-1L,
+    dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 }
 
@@ -27,6 +27,7 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
     \item{start}{the starting variant if importing part of VCF files}
     \item{count}{the maximum count of variant if importing part of VCF files,
         -1 indicates importing to the end}
+    \item{sample.id}{specify the sample IDs}
     \item{optimize}{if \code{TRUE}, optimize the access efficiency by calling
         \code{\link{cleanup.gds}}}
     \item{digest}{a logical value (TRUE/FALSE) or a character ("md5", "sha1",
