@@ -15,12 +15,18 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
 }
 
 \value{
-    None.
+    Return a list with the following components:
+    \code{num.sample}: the total number of samples;
+    \code{num.variant}: the total number of variants;
+    \code{compression}: the compression algorithm, e.g., zlib, zstd;
+    \code{layout}: the version of layout;
+    \code{sample.id}: NULL (anonymized) or a vector of sample IDs.
 }
 
 \references{
     \url{https://bitbucket.org/gavinband/bgen},
-    \url{http://bgenformat.org}
+    \url{http://bgenformat.org},
+    \url{https://github.com/zhengxwen/gds2bgen}
 }
 \author{Xiuwen Zheng}
 \seealso{

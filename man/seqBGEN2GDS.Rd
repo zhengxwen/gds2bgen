@@ -8,7 +8,7 @@
 \usage{
 seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
     float.type=c("packed8", "packed16", "single", "double"),
-    dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
+    geno=FALSE, dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 }
 
@@ -23,7 +23,14 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
         correspond to the algorithms with a maximum compression level; the
         suffix "_RA" indicates that fine-level random access is available; see
         more details at \code{\link{seqStorageOption}}}
-    \item{float.type}{XX}
+    \item{float.type}{"packed8": use packedreal8u to store real numbers, "packed16":
+        use packedreal16u; "single": single-precision floating-point numbers;
+        "double": double-precision floating-point numbers}
+    \item{geno}{if TRUE, store integer genotypes}
+    \item{dosage}{if TRUE, store floating-point dosages in "annotation/format/DS",
+        i.e., alternate allele dosages}
+    \item{prob}{if TRUE, store floating-point probabilities in "annotation/format/GP",
+        i.e., prob of heterozygous geno, prob of homozygous alternate allele}
     \item{start}{the starting variant if importing part of VCF files}
     \item{count}{the maximum count of variant if importing part of VCF files,
         -1 indicates importing to the end}
@@ -41,12 +48,8 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
     \item{verbose}{if \code{TRUE}, show information}
 }
 
-\details{
-    XX
-}
-
 \value{
-    An object of class \code{\link{gdsn.class}} of the new node.
+    Return the file name of SeqArray GDS file with an absolute path.
 }
 
 \references{

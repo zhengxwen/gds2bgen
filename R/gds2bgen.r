@@ -55,9 +55,9 @@ seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
 # Format conversion from BGEN to GDS
 #
 seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
-    float.type=c("packed8", "packed16", "single", "double"),
-    dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
-    optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
+    float.type=c("packed8", "packed16", "single", "double"), geno=FALSE, dosage=FALSE,
+    prob=TRUE, start=1L, count=-1L, sample.id=NULL, optimize=TRUE, digest=TRUE,
+    parallel=FALSE, verbose=TRUE)
 {
     stopifnot(is.character(bgen.fn), length(bgen.fn)==1L)
     stopifnot(is.character(out.fn), length(out.fn)==1L)
@@ -83,6 +83,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     }
     stopifnot(inherits(storage.option, "SeqGDSStorageClass"))
 
+    stopifnot(is.logical(geno), length(geno)==1L)
     stopifnot(is.logical(dosage), length(dosage)==1L)
     stopifnot(is.logical(prob), length(prob)==1L)
     stopifnot(is.numeric(start), length(start)==1L)
@@ -131,6 +132,15 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
                 nSamp))
         }
         info$sample.id <- sample.id
+        if (verbose)
+        {
+            cat("    user-defined sample id: ")
+            if (length(info$sample.id) > 4L)
+                cat(c(info$sample.id[seq_len(4L)], "..."), sep=", ")
+            else
+                cat(info$sample.id, sep=", ")
+            cat("\n")
+        }
     }
 
     # the number of parallel tasks
@@ -236,9 +246,29 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     varGeno <- addfolder.gdsn(gfile, "genotype")
     put.attr.gdsn(varGeno, "VariableName", "GT")
     put.attr.gdsn(varGeno, "Description", "Genotype")
+    if (geno)
+    {
+        SeqArray:::.AddVar(storage.option, varGeno, "data", storage="bit2",
+            valdim=c(2L, nSamp, 0L))
+        SeqArray:::.AddVar(storage.option, varGeno, "@data", storage="uint8",
+            visible=FALSE)
+        node <- SeqArray:::.AddVar(storage.option, varGeno, "extra.index",
+            storage="int32", valdim=c(3L,0L))
+        put.attr.gdsn(node, "R.colnames", c("sample.index", "variant.index", "length"))
+        SeqArray:::.AddVar(storage.option, varGeno, "extra", storage="int16")
+    }
 
     # add phase folder
     varPhase <- addfolder.gdsn(gfile, "phase")
+    if (geno)
+    {
+        SeqArray:::.AddVar(storage.option, varPhase, "data", storage="bit1",
+            valdim=c(nSamp, 0L))
+        node <- SeqArray:::.AddVar(storage.option, varPhase, "extra.index",
+            storage="int32", valdim=c(3L,0L))
+        put.attr.gdsn(node, "R.colnames", c("sample.index", "variant.index", "length"))
+        SeqArray:::.AddVar(storage.option, varPhase, "extra", storage="bit1")
+    }
 
     # add annotation folder
     varAnnot <- addfolder.gdsn(gfile, "annotation")

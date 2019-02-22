@@ -2,7 +2,7 @@
 //
 // gds2bgen.cpp: format conversion between GDS and BGEN
 //
-// Copyright (C) 2018    Xiuwen Zheng (zhengxwen@gmail.com)
+// Copyright (C) 2018-2019    Xiuwen Zheng (zhengxwen@gmail.com)
 //
 // gds2bgen is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License Version 3 as
@@ -404,6 +404,10 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 		PdAbstractArray varQual = GDS_Node_Path(Root, "annotation/qual", TRUE);
 		PdAbstractArray varFilter = GDS_Node_Path(Root, "annotation/filter", TRUE);
 
+		PdAbstractArray varGeno = GDS_Node_Path(Root, "genotype/data", FALSE);
+		PdAbstractArray varGenoLen = GDS_Node_Path(Root, "genotype/@data", FALSE);
+		PdAbstractArray varPhase = GDS_Node_Path(Root, "phase/data", FALSE);
+
 		PdAbstractArray varDS = GDS_Node_Path(Root, "annotation/format/DS/data", FALSE);
 		PdAbstractArray varDSLen = GDS_Node_Path(Root, "annotation/format/DS/@data", FALSE);
 
@@ -436,6 +440,8 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 		C_Int32 I32;
 		double F64;
 		vector<double> F64s(nSamp);
+		vector<C_UInt8> I8s(nSamp*2);
+		vector<C_UInt8> Zeros(nSamp, 0);
 		// progress information
 		CProgress prog((verbose || !Rf_isNull(progfile)) ? count : -1, progfile);
 
@@ -476,6 +482,40 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 			ProbSetter setter(&probs);
 			bgen::read_and_parse_genotype_data_block<ProbSetter>(m_stream,
 				m_context, setter, &m_buffer1, &m_buffer2);
+
+			// integer genotypes
+			if (varGeno)
+			{
+				// write integer genotypes
+				C_UInt8 *g = &I8s[0];
+				for (size_t i=0; i < nSamp; i++, g+=2)
+				{
+					vector<double> &p = probs[i];
+					if (p.size() == 3)
+					{
+						if (p[0]!=-1 && p[1]!=-1 && p[2]!=-1)
+						{
+							if (p[0] >= p[1])
+							{
+								g[0] = g[1] = (p[0] >= p[2]) ? 0 : 1;
+							} else {
+								if (p[1] > p[2])
+									{ g[0] = 0; g[1] = 1; }
+								else
+									g[0] = g[1] = 1;
+							}
+						} else
+							g[0] = g[1] = 0xFF;
+					} else
+						throw "Only support bi-allelic sites for integer genotypes.";
+				}
+				GDS_Array_AppendData(varGeno, nSamp*2, &I8s[0], svUInt8);
+				// write data size
+				I32 = 1;
+				GDS_Array_AppendData(varGenoLen, 1, &I32, svInt32);
+				// write phase
+				GDS_Array_AppendData(varPhase, nSamp, &Zeros[0], svUInt8);
+			}
 
 			// dosages
 			if (varDS)
