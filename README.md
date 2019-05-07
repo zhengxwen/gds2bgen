@@ -1,4 +1,4 @@
-gds2bgen: Format Conversion Between GDS and BGEN
+gds2bgen: Format Conversion from BGEN to GDS
 ===
 
 ![GPLv3](http://www.gnu.org/graphics/gplv3-88x31.png)
@@ -7,7 +7,12 @@ gds2bgen: Format Conversion Between GDS and BGEN
 
 ## Description
 
-This package provides functions for format conversion between [bgen](http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html) files to [SeqArray GDS](https://github.com/zhengxwen/SeqArray) files.
+This package provides functions for format conversion from [bgen](http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html) files to [SeqArray GDS](https://github.com/zhengxwen/SeqArray) files.
+
+
+## Version
+
+**v0.9.0**
 
 
 ## Package Maintainer
@@ -102,4 +107,3 @@ seqClose(f)
 
 ## Also See
 
-[gds2bcf](https://github.com/zhengxwen/gds2bcf): Format Conversion Between GDS and BCF
