@@ -77,9 +77,13 @@ seqBGEN_Info(bgen_fn)
 
 # example.8bits.bgen ==> example.gds, using 4 cores
 seqBGEN2GDS(bgen_fn, "example.gds", float.type="packed8",
-    geno=TRUE, dosage=TRUE, prob=TRUE, parallel=4)
+    geno=TRUE,      # 2-bit integer genotypes, 'genotype/data'
+    dosage=TRUE,    # numeric dosages, 'annotation/format/DS'
+    prob=TRUE,      # numeric probabilities, 'annotation/format/GP'
+    parallel=4)
 
 
+# show file structure
 library(SeqArray)
 (f <- seqOpen("example.gds"))
 seqClose(f)
