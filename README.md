@@ -12,7 +12,7 @@ This package provides functions for format conversion from [bgen](http://www.wel
 
 ## Version
 
-**v0.9.0**
+v0.9.0
 
 
 ## Package Maintainer
@@ -76,14 +76,15 @@ seqBGEN_Info(bgen_fn)
 
 
 # example.8bits.bgen ==> example.gds, using 4 cores
-seqBGEN2GDS(bgen_fn, "example.gds", float.type="packed8", parallel=4)
+seqBGEN2GDS(bgen_fn, "example.gds", float.type="packed8",
+    geno=TRUE, dosage=TRUE, prob=TRUE, parallel=4)
 
 
 library(SeqArray)
 (f <- seqOpen("example.gds"))
 seqClose(f)
 
-## File: example.gds (81.2K)
+## File: example.gds (137.7K)
 ## +    [  ] *
 ## |--+ description   [  ] *
 ## |--+ sample.id   { Str8 500 LZMA_ra(7.02%), 393B } *
@@ -92,13 +93,21 @@ seqClose(f)
 ## |--+ chromosome   { Str8 199 LZMA_ra(15.7%), 101B } *
 ## |--+ allele   { Str8 199 LZMA_ra(11.8%), 101B } *
 ## |--+ genotype   [  ] *
+## |  |--+ data   { Bit2 2x500x0 LZMA_ra, 18B } *
+## |  |--+ extra.index   { Int32 3x0 LZMA_ra, 18B } *
+## |  \--+ extra   { Int16 0 LZMA_ra, 18B }
 ## |--+ phase   [  ]
+## |  |--+ data   { Bit1 500x0 LZMA_ra, 18B } *
+## |  |--+ extra.index   { Int32 3x0 LZMA_ra, 18B } *
+## |  \--+ extra   { Bit1 0 LZMA_ra, 18B }
 ## |--+ annotation   [  ]
 ## |  |--+ id   { Str8 199 LZMA_ra(18.6%), 321B } *
 ## |  |--+ qual   { Float32 199 LZMA_ra(11.8%), 101B } *
 ## |  |--+ filter   { Int32 199 LZMA_ra(11.3%), 97B } *
 ## |  |--+ info   [  ]
 ## |  \--+ format   [  ]
+## |     |--+ DS   [  ] *
+## |     |  \--+ data   { PackedReal8U 500x199 LZMA_ra(55.6%), 54.0K } *
 ## |     \--+ GP   [  ] *
 ## |        \--+ data   { PackedReal8U 500x398 LZMA_ra(38.8%), 75.3K } *
 ## \--+ sample.annotation   [  ]
