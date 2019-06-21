@@ -28,9 +28,9 @@ seqBGEN2GDS(bgen.fn, out.fn, storage.option="LZMA_RA",
         "double": double-precision floating-point numbers}
     \item{geno}{if TRUE, store integer genotypes}
     \item{dosage}{if TRUE, store floating-point dosages in "annotation/format/DS",
-        i.e., alternate allele dosages}
+        i.e., alternative allele dosages}
     \item{prob}{if TRUE, store floating-point probabilities in "annotation/format/GP",
-        i.e., prob of heterozygous geno, prob of homozygous alternate allele}
+        i.e., prob of heterozygous geno, prob of homozygous alternative allele}
     \item{start}{the starting variant if importing part of VCF files}
     \item{count}{the maximum count of variant if importing part of VCF files,
         -1 indicates importing to the end}
