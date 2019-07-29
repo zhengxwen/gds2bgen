@@ -67,6 +67,7 @@ Zheng X, Gogarten S, Lawrence M, Stilp A, Conomos M, Weir BS, Laurie C, Levine D
 library(gds2bgen)
 
 bgen_fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
+# or bgen_fn <- "your_bgen_file.bgen"
 seqBGEN_Info(bgen_fn)
 
 ## bgen file: gds2bgen/extdata/example.8bits.bgen
@@ -78,7 +79,9 @@ seqBGEN_Info(bgen_fn)
 
 
 # example.8bits.bgen ==> example.gds, using 4 cores
-seqBGEN2GDS(bgen_fn, "example.gds", float.type="packed8",
+seqBGEN2GDS(bgen_fn, "example.gds",
+    storage.option="LZMA_RA",  # compression option, e.g., ZIP_RA for zlib or LZ4_RA for LZ4
+    float.type="packed8",      # 8-bit packed real numbers
     geno=TRUE,      # 2-bit integer genotypes, stored in 'genotype/data'
     dosage=TRUE,    # numeric alternative allele dosages, stored in 'annotation/format/DS'
     prob=TRUE,      # numeric probabilities, stored in 'annotation/format/GP'
@@ -122,3 +125,5 @@ seqClose(f)
 
 
 ## Also See
+
+[seqVCF2GDS()](https://rdrr.io/bioc/SeqArray/man/seqVCF2GDS.html) in the [SeqArray](http://bioconductor.org/packages/SeqArray) package, conversion from VCF files to GDS files.
