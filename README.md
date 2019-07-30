@@ -126,4 +126,6 @@ seqClose(f)
 
 ## Also See
 
-[seqVCF2GDS()](https://rdrr.io/bioc/SeqArray/man/seqVCF2GDS.html) in the [SeqArray](http://bioconductor.org/packages/SeqArray) package, conversion from VCF files to GDS files.
+[seqVCF2GDS()](https://rdrr.io/bioc/SeqArray/man/seqVCF2GDS.html) in the [SeqArray](https://bioconductor.org/packages/SeqArray) package, conversion from VCF files to GDS files.
+
+[seqBED2GDS()](https://rdrr.io/bioc/SeqArray/man/seqBED2GDS.html) in the [SeqArray](https://bioconductor.org/packages/SeqArray) package, conversion from PLINK BED files to GDS files.
