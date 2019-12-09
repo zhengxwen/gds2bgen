@@ -2,7 +2,7 @@
 #
 # gds2bgen.r: format conversion between GDS and BGEN
 #
-# Copyright (C) 2018    Xiuwen Zheng (zhengxwen@gmail.com)
+# Copyright (C) 2018-2019    Xiuwen Zheng (zhengxwen@gmail.com)
 #
 # This is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License Version 3 as
@@ -32,7 +32,7 @@ seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
         cat("bgen file: ", normalizePath(bgen.fn), "\n", sep="")
         cat("# of samples: ", rv$num.sample, "\n", sep="")
         cat("# of variants: ", rv$num.variant, "\n", sep="")
-        cat("compression method: ", rv$compression, "\n", sep="")
+        cat("bgen compression method: ", rv$compression, "\n", sep="")
         cat("layout version: ", rv$layout, "\n", sep="")
        	cat("sample id: ")
         if (is.null(rv$sample.id))
@@ -101,7 +101,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
         cat(" (", SeqArray:::.pretty_size(file.size(bgen.fn)), ")\n", sep="")
         cat("    # of samples: ", info$num.sample, "\n", sep="")
         cat("    # of variants: ", info$num.variant, "\n", sep="")
-        cat("    compression method: ", info$compression, "\n", sep="")
+        cat("    bgen compression method: ", info$compression, "\n", sep="")
         cat("    layout version: ", info$layout, "\n", sep="")
        	cat("    sample id: ")
         if (is.null(info$sample.id))
@@ -158,7 +158,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
 
         if (count >= pnum)
         {
-            fn <- basename(sub("^([^.]*).*", "\\1", out.fn))
+            fn <- sub("^([^.]*).*", "\\1", basename(out.fn))
             psplit <- SeqArray:::.file_split(count, pnum, start, FALSE)
 
             # need unique temporary file names

@@ -82,9 +82,9 @@ seqBGEN_Info(bgen_fn)
 seqBGEN2GDS(bgen_fn, "example.gds",
     storage.option="LZMA_RA",  # compression option, e.g., ZIP_RA for zlib or LZ4_RA for LZ4
     float.type="packed8",      # 8-bit packed real numbers
-    geno=TRUE,      # 2-bit integer genotypes, stored in 'genotype/data'
+    geno=FALSE,     # 2-bit integer genotypes, stored in 'genotype/data'
     dosage=TRUE,    # numeric alternative allele dosages, stored in 'annotation/format/DS'
-    prob=TRUE,      # numeric probabilities, stored in 'annotation/format/GP'
+    prob=FALSE,     # numeric genotype probabilities, stored in 'annotation/format/GP'
     parallel=4      # the number of cores
 )
 
