@@ -114,6 +114,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
                 cat(info$sample.id, sep=", ")
             cat("\n")
         }
+        cat("    output: ", out.fn, "\n", sep="")
         flush.console()
     }
 
