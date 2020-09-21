@@ -182,24 +182,26 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
             }
 
             # conversion in parallel
-            seqParallel(parallel, NULL, FUN = function(
-                bgen.fn, storage.option, float.type, dosage, prob,
-                optim, ptmpfn, psplit, verbose)
-            {
-                library("gds2bgen", quietly=TRUE)
-                # the process id, starting from one
-                i <- SeqArray:::process_index
-                attr(bgen.fn, "progress") <- TRUE
-                seqBGEN2GDS(bgen.fn, ptmpfn[i], storage.option=storage.option,
-                    float.type=float.type, dosage=dosage, prob=prob,
-                    start=psplit[[1L]][i], count=psplit[[2L]][i],
-                    optimize=optim, digest=FALSE, parallel=FALSE,
-                    verbose=FALSE)
-                invisible()
-            }, split="none",
-                bgen.fn=bgen.fn, storage.option=storage.option,
-                float.type=float.type, dosage=dosage, prob=prob,
-                optim=optimize, ptmpfn=ptmpfn, psplit=psplit, verbose=verbose
+            seqParallel(parallel, NULL,
+                FUN = function(
+                               bgen.fn, storage.option, float.type, dosage, geno, prob,
+                               optim, ptmpfn, psplit, verbose) {
+                    library("gds2bgen", quietly = TRUE)
+                    # the process id, starting from one
+                    i <- SeqArray:::process_index
+                    attr(bgen.fn, "progress") <- TRUE
+                    seqBGEN2GDS(bgen.fn, ptmpfn[i],
+                        storage.option = storage.option,
+                        float.type = float.type, dosage = dosage, geno = geno, prob = prob,
+                        start = psplit[[1L]][i], count = psplit[[2L]][i],
+                        optimize = optim, digest = FALSE, parallel = FALSE,
+                        verbose = FALSE
+                    )
+                    invisible()
+                }, split = "none",
+                bgen.fn = bgen.fn, storage.option = storage.option,
+                float.type = float.type, dosage = dosage, geno = geno, prob = prob,
+                optim = optimize, ptmpfn = ptmpfn, psplit = psplit, verbose = verbose
             )
 
             if (verbose)
@@ -343,6 +345,14 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
         {
             varnm <- c(varnm, c("annotation/format/GP/data",
                 "annotation/format/GP/@data"))
+        }
+        if (geno) {
+            varnm <- c(varnm, c(
+                "genotype/data",
+                "genotype/@data",
+                "genotype/extra.index",
+                "genotype/extra"
+            ))
         }
 
         if (verbose) cat("Merging:\n")
