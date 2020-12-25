@@ -1,4 +1,11 @@
-CHANGES IN VERSION 0.9.0
+CHANGES IN VERSION 0.9.1 (2020-12-25)
+-------------------------
+
+    o new options 'sp.real32' and 'sp.real64' in `seqBGEN2GDS()` to store
+      a sparse dosage matrix (requiring gdsfmt >= v1.24.0)
+
+
+CHANGES IN VERSION 0.9.0 (2018-11-20)
 -------------------------
 
     o first release of gds2bgen

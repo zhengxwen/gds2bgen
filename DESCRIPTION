@@ -1,15 +1,16 @@
 Package: gds2bgen
 Type: Package
 Title: Format Conversion from BGEN to GDS
-Version: 0.9.0
-Date: 2018-11-29
-Depends: R (>= 3.3.0), methods, gdsfmt (>= 1.20.0)
+Version: 0.9.1
+Date: 2020-12-25
+Depends: R (>= 3.3.0), methods, gdsfmt (>= 1.24.0)
 Imports: SeqArray (>= 1.24.0)
 LinkingTo: gdsfmt
 Suggests: parallel, digest, crayon, RUnit, knitr, BiocGenerics
 Authors@R: c(person("Xiuwen", "Zheng", role=c("aut", "cre"),
         email="zhengxwen@gmail.com", comment=c(ORCID="0000-0002-1390-0708")))
-Description: This package provides functions for format conversion from bgen files to SeqArray GDS files.
+Description: This package provides functions for format conversion from bgen
+        files to SeqArray GDS files.
 License: GPL-3
 SystemRequirements: C++11
 Copyright: This package includes the sources of the bgen library

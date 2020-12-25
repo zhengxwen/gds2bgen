@@ -17,23 +17,31 @@
 # with gds2bgen.
 # If not, see <http://www.gnu.org/licenses/>.
 
+#############################################################
+# Internal functions
+#
+
+.cat <- function(...) cat(..., "\n", sep="")
+
 
 #############################################################
 # Get bgen file information
 #
 seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
 {
-    stopifnot(is.character(bgen.fn), length(bgen.fn)==1L)
+    # check
+    stopifnot(is.character(bgen.fn), length(bgen.fn)==1L, !is.na(bgen.fn))
+
     rv <- .Call(SEQ_BGEN_Info, bgen.fn)
     names(rv) <- c("num.sample", "num.variant", "compression", "layout",
         "sample.id")
     if (verbose)
     {
-        cat("bgen file: ", normalizePath(bgen.fn), "\n", sep="")
-        cat("# of samples: ", rv$num.sample, "\n", sep="")
-        cat("# of variants: ", rv$num.variant, "\n", sep="")
-        cat("bgen compression method: ", rv$compression, "\n", sep="")
-        cat("layout version: ", rv$layout, "\n", sep="")
+        .cat("bgen file: ", normalizePath(bgen.fn))
+        .cat("# of samples: ", rv$num.sample)
+        .cat("# of variants: ", rv$num.variant)
+        .cat("bgen compression method: ", rv$compression)
+        .cat("layout version: ", rv$layout)
        	cat("sample id: ")
         if (is.null(rv$sample.id))
         {
@@ -54,15 +62,15 @@ seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
 #############################################################
 # Format conversion from BGEN to GDS
 #
-seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
-    float.type=c("packed8", "packed16", "single", "double"), geno=FALSE, dosage=FALSE,
-    prob=TRUE, start=1L, count=-1L, sample.id=NULL, optimize=TRUE, digest=TRUE,
-    parallel=FALSE, verbose=TRUE)
+seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
+    c("packed8", "packed16", "single", "double", "sp.real32", "sp.real64"),
+    geno=FALSE, dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
+    optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 {
+    # check
     stopifnot(is.character(bgen.fn), length(bgen.fn)==1L)
     stopifnot(is.character(out.fn), length(out.fn)==1L)
     float.type <- match.arg(float.type)
-
     if (is.character(storage.option))
     {
         storage.option <- seqStorageOption(storage.option)
@@ -70,39 +78,40 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
             packed8  = "packedreal8u:offset=0,scale=1/127",
             packed16 = "packedreal16u:offset=0,scale=1/32767",
             single   = "float32",
-            double   = "float64")
+            double   = "float64",
+            sp.real32 = "sp.real32",
+            sp.real64 = "sp.real64")
         s2 <- switch(float.type,
             packed8  = "packedreal8u:offset=0,scale=1/254",
             packed16 = "packedreal16u:offset=0,scale=1/65534",
             single   = "float32",
-            double   = "float64")
+            double   = "float64",
+            sp.real32 = "sp.real32",
+            sp.real64 = "sp.real64")
 		storage.option$mode <- c(
 			`annotation/format/DS`=s1,
 			`annotation/format/GP`=s2
 		)
     }
     stopifnot(inherits(storage.option, "SeqGDSStorageClass"))
-
     stopifnot(is.logical(geno), length(geno)==1L)
     stopifnot(is.logical(dosage), length(dosage)==1L)
     stopifnot(is.logical(prob), length(prob)==1L)
     stopifnot(is.numeric(start), length(start)==1L)
     stopifnot(is.numeric(count), length(count)==1L)
 
-
     # get bgen info
     info <- seqBGEN_Info(bgen.fn, verbose=FALSE)
-
     if (verbose)
     {
-        cat(date(), "\n", sep="")
+        .cat(date())
         cat("BGEN Import:\n")
         cat("    file:", bgen.fn)
         cat(" (", SeqArray:::.pretty_size(file.size(bgen.fn)), ")\n", sep="")
-        cat("    # of samples: ", info$num.sample, "\n", sep="")
-        cat("    # of variants: ", info$num.variant, "\n", sep="")
-        cat("    bgen compression method: ", info$compression, "\n", sep="")
-        cat("    layout version: ", info$layout, "\n", sep="")
+        .cat("    # of samples: ", info$num.sample)
+        .cat("    # of variants: ", info$num.variant)
+        .cat("    bgen compression method: ", info$compression)
+        .cat("    layout version: ", info$layout)
        	cat("    sample id: ")
         if (is.null(info$sample.id))
         {
@@ -114,7 +123,6 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
                 cat(info$sample.id, sep=", ")
             cat("\n")
         }
-        cat("    output: ", out.fn, "\n", sep="")
         flush.console()
     }
 
@@ -173,6 +181,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
             }
             if (verbose)
             {
+                cat("    output to path: ", file.path(dirname(out.fn), ""), "\n", sep="")
                 cat(sprintf("    writing to %d files:\n", pnum))
                 cat(sprintf("        %s [%s..%s]\n", basename(ptmpfn),
                     SeqArray:::.pretty(psplit[[1L]]),
@@ -218,14 +227,13 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA",
     gfile <- createfn.gds(out.fn)
     on.exit({ if (!is.null(gfile)) closefn.gds(gfile) })
     if (verbose)
-        cat("Output:\n    ", out.fn, "\n", sep="")
+        .cat("Output:\n    ", out.fn)
 
     put.attr.gdsn(gfile$root, "FileFormat", "SEQ_ARRAY")
     put.attr.gdsn(gfile$root, "FileVersion", "v1.0")
 
     n <- addfolder.gdsn(gfile, "description")
     put.attr.gdsn(n, "bgen.version", info$layout)
-
 
     # add sample.id
     if (is.null(info$sample.id))
