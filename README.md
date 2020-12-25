@@ -7,7 +7,7 @@ gds2bgen: Format Conversion from BGEN to GDS
 
 ## Description
 
-This package provides functions for format conversion from [bgen](http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html) files to [SeqArray GDS](https://github.com/zhengxwen/SeqArray) files.
+This package provides functions for format conversion from [bgen](https://www.well.ox.ac.uk/~gav/bgen_format/history.html) files to [SeqArray GDS](https://github.com/zhengxwen/SeqArray) files.
 
 
 ## Version
@@ -37,8 +37,8 @@ git clone https://github.com/zhengxwen/gds2bgen
 cd gds2bgen/src
 tar -vxzf gavinband-bgen-0b7a2803adb5.tar.gz
 cd gavinband-bgen-0b7a2803adb5
-./waf configure
-./waf
+python2 ./waf configure
+python2 ./waf
 cp build/libbgen.a ..
 cp build/3rd_party/zstd-1.1.0/libzstd.a ..
 rm -rf build
