@@ -326,7 +326,8 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Info(SEXP bgen_fn)
 		// output
 		uint32_t v;
 		const char *s;
-		PROTECT(rv_ans = NEW_LIST(5));
+		const size_t nlist = 9;
+		PROTECT(rv_ans = NEW_LIST(nlist));
 			// the number of samples
 			SET_ELEMENT(rv_ans, 0,
 				ScalarInteger(m_context.number_of_samples));
@@ -351,6 +352,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Info(SEXP bgen_fn)
 			else
 				s = "v1.1";
 			SET_ELEMENT(rv_ans, 3, mkString(s));
+
 			// sample IDs
 			if (m_context.flags & bgen::e_SampleIdentifiers)
 			{
@@ -358,10 +360,54 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Info(SEXP bgen_fn)
 				bgen::read_sample_identifier_block(m_stream, m_context,
 					[&](string id) { id_lst.push_back(id); });
 				SEXP ss = NEW_CHARACTER(id_lst.size());
-				SET_ELEMENT(rv_ans, 4, ss);
+				SET_ELEMENT(rv_ans, nlist-1, ss);
 				for (size_t i=0; i < id_lst.size(); i++)
 					SET_STRING_ELT(ss, i, mkChar(id_lst[i].c_str()));
 			}
+
+			// pack information
+			if ((m_context.flags & bgen::e_Layout2) &&
+				m_context.number_of_samples>0 && m_context.number_of_variants>0)
+			{
+				// used for v1.2 only
+				vector<genfile::byte_t> m_buffer1, m_buffer2;
+				// variant info (unused)
+				string chr, snpid, rsid, s;
+				uint32_t position;
+				bgen::read_snp_identifying_data(m_stream, m_context,
+					&snpid, &rsid, &chr, &position,
+					[](size_t n) { }, [](size_t i, string const& allele) { }
+				);
+
+				genfile::byte_t *buf_ptr, *buf_end;
+				bgen::read_genotype_data_block(m_stream, m_context, &m_buffer1);
+				if ((m_context.flags & bgen::e_CompressedSNPBlocks) !=
+					bgen::e_NoCompression)
+				{
+					bgen::uncompress_probability_data(m_context, m_buffer1, &m_buffer2);
+					buf_ptr = &m_buffer2[0];
+					buf_end = &m_buffer2[0] + m_buffer2.size();
+				} else {
+					buf_ptr = &m_buffer1[0];
+					buf_end = &m_buffer1[0] + m_buffer1.size();
+				}
+
+				bgen::v12::GenotypeDataBlock bk(m_context, buf_ptr, buf_end);
+				// unphased
+				SET_ELEMENT(rv_ans, 4, ScalarLogical(!bk.phased));
+				// bits
+				SET_ELEMENT(rv_ans, 5, ScalarInteger(bk.bits));
+				// ploidy.min
+				SET_ELEMENT(rv_ans, 6, ScalarInteger(bk.ploidyExtent[0]));
+				// ploidy.max
+				SET_ELEMENT(rv_ans, 7, ScalarInteger(bk.ploidyExtent[1]));
+			} else {
+				SET_ELEMENT(rv_ans, 4, ScalarLogical(TRUE)); // unphased
+				SET_ELEMENT(rv_ans, 5, ScalarInteger(8));    // bits
+				SET_ELEMENT(rv_ans, 6, ScalarInteger(2));    // ploidy.min
+				SET_ELEMENT(rv_ans, 7, ScalarInteger(2));    // ploidy.max
+			}
+
 		UNPROTECT(1);
 
 	COREARRAY_CATCH
@@ -440,7 +486,7 @@ COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Import(SEXP bgen_fn, SEXP gds_root,
 
 		// buffers, these are used as working space by bgen implementation
 		vector<vector<double>> probs;
-		vector<genfile::byte_t> m_buffer1, m_buffer2 ;
+		vector<genfile::byte_t> m_buffer1, m_buffer2;
 		const size_t nSamp = m_context.number_of_samples;
 		C_Int32 I32;
 		double F64;
