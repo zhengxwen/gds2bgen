@@ -12,7 +12,7 @@ This package provides functions for format conversion from [bgen](http://bgenfor
 
 ## Version
 
-v0.9.1
+v0.9.2
 
 
 ## Package Maintainer
@@ -35,8 +35,8 @@ Or manually intall the package
 ```sh
 git clone https://github.com/zhengxwen/gds2bgen
 cd gds2bgen/src
-tar -vxzf gavinband-bgen-0b7a2803adb5.tar.gz
-cd gavinband-bgen-0b7a2803adb5
+unzip bgen_v1.1.8.zip
+cd bgen_v1.1.8
 python2 ./waf configure
 python2 ./waf
 cp build/libbgen.a ..
@@ -49,8 +49,7 @@ R CMD INSTALL gds2bgen
 
 ## Copyright Notice
 
-This package includes the sources of the bgen library written by Gavin Band and
-Jonathan Marchini (https://bitbucket.org/gavinband/bgen), Boost (the C++
+This package includes the sources of the bgen library (https://enkre.net/cgi-bin/code/bgen/dir?ci=trunk), Boost (the C++
 libraries, https://www.boost.org) and Zstandard (https://zstd.net).
 
 
@@ -65,6 +64,8 @@ Zheng X, Gogarten S, Lawrence M, Stilp A, Conomos M, Weir BS, Laurie C, Levine D
 
 ```R
 library(gds2bgen)
+
+seqBGEN_Info()  # bgen library version
 
 bgen_fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
 # or bgen_fn <- "your_bgen_file.bgen"

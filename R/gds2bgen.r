@@ -27,11 +27,14 @@
 #############################################################
 # Get bgen file information
 #
-seqBGEN_Info <- function(bgen.fn, verbose=TRUE)
+seqBGEN_Info <- function(bgen.fn=NULL, verbose=TRUE)
 {
     # check
-    stopifnot(is.character(bgen.fn), length(bgen.fn)==1L, !is.na(bgen.fn))
+    stopifnot(is.null(bgen.fn) | is.character(bgen.fn))
+    if (is.null(bgen.fn))
+        return(.Call(SEQ_BGEN_Info, NULL))
 
+    stopifnot(length(bgen.fn)==1L, !is.na(bgen.fn))
     rv <- .Call(SEQ_BGEN_Info, bgen.fn)
     names(rv) <- c("num.sample", "num.variant", "compression", "layout",
         "sample.id")

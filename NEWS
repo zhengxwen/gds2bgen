@@ -1,11 +1,19 @@
-CHANGES IN VERSION 0.9.1 (2020-12-25)
+CHANGES IN VERSION 0.9.2 (2022-12)
+-------------------------
+
+    o update bgen library to v1.1.8 (Jun 27, 2020)
+
+    o seqBGEN_Info() returns the version of bgen library
+
+
+CHANGES IN VERSION 0.9.1 (2020-12)
 -------------------------
 
     o new options 'sp.real32' and 'sp.real64' in `seqBGEN2GDS()` to store
       a sparse dosage matrix (requiring gdsfmt >= v1.24.0)
 
 
-CHANGES IN VERSION 0.9.0 (2018-11-20)
+CHANGES IN VERSION 0.9.0 (2018-11)
 -------------------------
 
     o first release of gds2bgen

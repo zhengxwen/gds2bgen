@@ -2,11 +2,12 @@
 ###                          gds2bgen                            ###
 ###                                                              ###
 
-# download the bgen library from https://bitbucket.org/gavinband/bgen
-BGEN_VERSION = gavinband-bgen-0b7a2803adb5
+# download the bgen library from
+# https://enkre.net/cgi-bin/code/bgen/dir?ci=release
+BGEN_DIR = bgen_v1.1.8
 
 # additional preprocessor options
-PKG_CPPFLAGS = -I$(BGEN_VERSION)/genfile/include -I$(BGEN_VERSION)/3rd_party/zstd-1.1.0/lib
+PKG_CPPFLAGS = -I$(BGEN_DIR)/genfile/include -I$(BGEN_DIR)/3rd_party/zstd-1.1.0/lib
 
 # to set flags for the linker
 PKG_LIBS = libbgen.a libzstd.a
@@ -18,23 +19,23 @@ SOURCES = R_gds2bgen.c gds2bgen.cpp
 OBJECTS = R_gds2bgen.o gds2bgen.o
 
 
-all: $(BGEN_VERSION) $(SHLIB)
+all: $(BGEN_DIR) $(SHLIB)
 
-$(BGEN_VERSION):
-	tar -vxzf $(BGEN_VERSION).tar.gz
+$(BGEN_DIR):
+	unzip $(BGEN_DIR).zip
 
 $(SHLIB): libbgen.a libzstd.a
 
 
-libbgen.a: $(BGEN_VERSION)
-	cd $(BGEN_VERSION) && python2 ./waf configure && python2 ./waf
-	cp -f $(BGEN_VERSION)/build/libbgen.a .
-	cp -f $(BGEN_VERSION)/build/3rd_party/zstd-1.1.0/libzstd.a .
-	rm -rf $(BGEN_VERSION)/build
+libbgen.a: $(BGEN_DIR)
+	cd $(BGEN_DIR) && python2 ./waf configure && python2 ./waf
+	cp -f $(BGEN_DIR)/build/libbgen.a .
+	cp -f $(BGEN_DIR)/build/3rd_party/zstd-1.1.0/libzstd.a .
+	rm -rf $(BGEN_DIR)/build
 
 
 clean:
 	rm -f $(OBJECTS)
 	rm -f libbgen.a
 	rm -f libzstd.a
-	rm -rf $(BGEN_VERSION)
+	rm -rf $(BGEN_DIR)

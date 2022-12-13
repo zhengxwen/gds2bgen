@@ -10,7 +10,8 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
 }
 
 \arguments{
-    \item{bgen.fn}{the file name of a bgen file}
+    \item{bgen.fn}{the file name of a bgen file, or NULL for the bgen library
+        version}
     \item{verbose}{if \code{TRUE}, show information}
 }
 
@@ -34,6 +35,10 @@ seqBGEN_Info(bgen.fn, verbose=TRUE)
 }
 
 \examples{
+# bgen lib version
+seqBGEN_Info()
+
+# information of the bgen file
 bgen.fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
 seqBGEN_Info(bgen.fn)
 }

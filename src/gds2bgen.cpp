@@ -37,6 +37,9 @@ using namespace CoreArray;
 using namespace genfile;
 
 
+// defined in bgen_v1.1.8/wscript
+static const char *bgen_version = "bgen_lib_v1.1.8";
+
 // The ProbSetter structure is from bgen_to_vcf.cpp
 // ProbSetter is a callback object appropriate for passing to bgen::read_genotype_data_block() or
 // the synonymous method of genfile::bgen::View. See the comment in bgen.hpp above
@@ -302,8 +305,10 @@ extern "C"
 /// get the info of bgen file
 COREARRAY_DLL_EXPORT SEXP SEQ_BGEN_Info(SEXP bgen_fn)
 {
-	const char *filename = CHAR(STRING_ELT(bgen_fn, 0));
+	// only need bgen library version information?
+	if (Rf_isNull(bgen_fn)) return mkString(bgen_version);
 
+	const char *filename = CHAR(STRING_ELT(bgen_fn, 0));
 	COREARRAY_TRY
 
 		// open the bgen file

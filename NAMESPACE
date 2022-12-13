@@ -4,11 +4,10 @@ useDynLib(gds2bgen,
 )
 
 # Export the following names
-export(
-    seqBGEN_Info, seqBGEN2GDS
-)
+exportPattern("^seq*")
 
 # Import
 import(methods)
 import(gdsfmt)
+importFrom(utils, flush.console)
 importFrom(SeqArray, seqStorageOption, seqParallel)
