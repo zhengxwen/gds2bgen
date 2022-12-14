@@ -3,10 +3,12 @@ CHANGES IN VERSION 0.9.2 (2022-12)
 
     o update bgen library to v1.1.8 (Jun 27, 2020)
 
-    o seqBGEN_Info(NULL) returns the version of bgen library
+    o `seqBGEN_Info(NULL)` returns the version of bgen library
 
-    o seqBGEN_Info() returns additional information: phased status, # of bits,
+    o `seqBGEN_Info()` returns additional information: phased status, # of bits,
       and ploidy
+
+    o `seqBGEN2GDS()` outputs to dosages by default, instead of prob.
 
 
 CHANGES IN VERSION 0.9.1 (2020-12)

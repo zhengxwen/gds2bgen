@@ -73,7 +73,7 @@ seqBGEN_Info <- function(bgen.fn=NULL, verbose=TRUE)
 #
 seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
     c("packed8", "packed16", "single", "double", "sp.real32", "sp.real64"),
-    geno=FALSE, dosage=FALSE, prob=TRUE, start=1L, count=-1L, sample.id=NULL,
+    geno=FALSE, dosage=TRUE, prob=FALSE, start=1L, count=-1L, sample.id=NULL,
     optimize=TRUE, digest=TRUE, parallel=FALSE, verbose=TRUE)
 {
     # check
@@ -114,6 +114,7 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
     if (verbose)
     {
         .cat(date())
+        # bgen information
         cat("BGEN Import:\n")
         cat("    file:", bgen.fn)
         cat(" (", SeqArray:::.pretty_size(file.size(bgen.fn)), ")\n", sep="")
@@ -121,6 +122,12 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
         .cat("    # of variants: ", info$num.variant)
         .cat("    bgen compression method: ", info$compression)
         .cat("    layout version: ", info$layout)
+        .cat("    unphased: ", info$unphased)
+        .cat("    # of bits: ", info$bits)
+        if (info$ploidy.min == info$ploidy.max)
+            .cat("    ploidy: ", info$ploidy.min)
+        else
+            .cat("    ploidy: [", info$ploidy.min, ", ", info$ploidy.max, "]")
        	cat("    sample id: ")
         if (is.null(info$sample.id))
         {
@@ -132,6 +139,11 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
                 cat(info$sample.id, sep=", ")
             cat("\n")
         }
+        # gds information
+        .cat("Output:\n    ", out.fn)
+        .cat("    saving genotypes [GT]: ", geno)
+        .cat("    saving dosages [annotation/format/DS]: ", dosage)
+        .cat("    saving probabilities [annotation/format/GP]: ", prob)
         flush.console()
     }
 
@@ -235,8 +247,6 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
     # create a GDS file
     gfile <- createfn.gds(out.fn)
     on.exit({ if (!is.null(gfile)) closefn.gds(gfile) })
-    if (verbose)
-        .cat("Output:\n    ", out.fn)
 
     put.attr.gdsn(gfile$root, "FileFormat", "SEQ_ARRAY")
     put.attr.gdsn(gfile$root, "FileVersion", "v1.0")
