@@ -66,16 +66,20 @@ Zheng X, Gogarten S, Lawrence M, Stilp A, Conomos M, Weir BS, Laurie C, Levine D
 library(gds2bgen)
 
 seqBGEN_Info()  # bgen library version
+## "bgen_lib_v1.1.8"
 
 bgen_fn <- system.file("extdata", "example.8bits.bgen", package="gds2bgen")
 # or bgen_fn <- "your_bgen_file.bgen"
 seqBGEN_Info(bgen_fn)
 
-## bgen file: gds2bgen/extdata/example.8bits.bgen
+## File: gds2bgen/extdata/example.8bits.bgen
 ## # of samples: 500
 ## # of variants: 199
-## compression method: zlib
-## layout version: v1.2
+## Compression method: zlib
+## Layout version: v1.2
+## Unphased: TRUE
+## # of bits: 8
+## Ploidy: 2
 ## sample id: sample_001, sample_002, sample_003, sample_004, ...
 
 
@@ -104,13 +108,7 @@ seqClose(f)
 ## |--+ chromosome   { Str8 199 LZMA_ra(15.7%), 101B } *
 ## |--+ allele   { Str8 199 LZMA_ra(11.8%), 101B } *
 ## |--+ genotype   [  ] *
-## |  |--+ data   { Bit2 2x500x0 LZMA_ra, 18B } *
-## |  |--+ extra.index   { Int32 3x0 LZMA_ra, 18B } *
-## |  \--+ extra   { Int16 0 LZMA_ra, 18B }
 ## |--+ phase   [  ]
-## |  |--+ data   { Bit1 500x0 LZMA_ra, 18B } *
-## |  |--+ extra.index   { Int32 3x0 LZMA_ra, 18B } *
-## |  \--+ extra   { Bit1 0 LZMA_ra, 18B }
 ## |--+ annotation   [  ]
 ## |  |--+ id   { Str8 199 LZMA_ra(18.6%), 321B } *
 ## |  |--+ qual   { Float32 199 LZMA_ra(11.8%), 101B } *
@@ -119,8 +117,6 @@ seqClose(f)
 ## |  \--+ format   [  ]
 ## |     |--+ DS   [  ] *
 ## |     |  \--+ data   { PackedReal8U 500x199 LZMA_ra(55.6%), 54.0K } *
-## |     \--+ GP   [  ] *
-## |        \--+ data   { PackedReal8U 500x398 LZMA_ra(38.8%), 75.3K } *
 ## \--+ sample.annotation   [  ]
 ```
 
