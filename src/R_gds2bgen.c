@@ -1,5 +1,5 @@
 //
-// R_SeqArray.c: Link to the gdsfmt package
+// R_gds2bgen.c: Link to the gdsfmt package
 //
 
 #include <R_GDS.h>

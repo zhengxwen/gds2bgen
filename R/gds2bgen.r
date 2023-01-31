@@ -375,11 +375,10 @@ seqBGEN2GDS <- function(bgen.fn, out.fn, storage.option="LZMA_RA", float.type=
         }
         if (geno) {
             varnm <- c(varnm, c(
-                "genotype/data",
-                "genotype/@data",
-                "genotype/extra.index",
-                "genotype/extra"
-            ))
+                "genotype/data", "genotype/@data",
+                "genotype/extra.index", "genotype/extra",
+                "phase/data",
+                "phase/extra.index", "phase/extra" ))
         }
 
         if (verbose) cat("Merging:\n")
