@@ -12,7 +12,7 @@ This package provides functions for format conversion from [bgen](http://bgenfor
 
 ## Version
 
-v0.9.2
+v0.9.3
 
 
 ## Package Maintainer
@@ -42,6 +42,7 @@ python2 ./waf
 cp build/libbgen.a ..
 cp build/3rd_party/zstd-1.1.0/libzstd.a ..
 rm -rf build
+touch ../libbgen.a
 cd ../../..
 R CMD INSTALL gds2bgen
 ```
