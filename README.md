@@ -42,7 +42,7 @@ python2 ./waf
 cp build/libbgen.a ..
 cp build/3rd_party/zstd-1.1.0/libzstd.a ..
 rm -rf build
-touch ../libbgen.a
+sleep 1; touch ../libbgen.a
 cd ../../..
 R CMD INSTALL gds2bgen
 ```
