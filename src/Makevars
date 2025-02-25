@@ -18,6 +18,7 @@ CXX_STD = CXX11
 SOURCES = R_gds2bgen.c gds2bgen.cpp
 OBJECTS = R_gds2bgen.o gds2bgen.o
 
+# detect Python version (prefers python3, then python2)
 PYTHON := $(shell command -v python3 || command -v python2 || echo "python")
 
 

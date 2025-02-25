@@ -12,7 +12,7 @@ This package provides functions for format conversion from [bgen](http://bgenfor
 
 ## Version
 
-v0.9.3
+v0.9.4
 
 
 ## Package Maintainer
@@ -37,8 +37,8 @@ git clone https://github.com/zhengxwen/gds2bgen
 cd gds2bgen/src
 unzip bgen_v1.1.8.zip
 cd bgen_v1.1.8
-python2 ./waf configure
-python2 ./waf
+python ./waf configure
+python ./waf
 cp build/libbgen.a ..
 cp build/3rd_party/zstd-1.1.0/libzstd.a ..
 rm -rf build
