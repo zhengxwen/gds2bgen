@@ -27,13 +27,13 @@ Requires R (≥ v3.5.0), [gdsfmt](http://www.bioconductor.org/packages/gdsfmt) (
 * Installation from Github:
 ```R
 library("devtools")
-install_github("zhengxwen/gds2bgen")
+install_github("CoreArray/gds2bgen")
 ```
 The `install_github()` approach requires that you build from source, i.e. `make` and compilers must be installed on your system -- see the [R FAQ](http://cran.r-project.org/faqs.html) for your operating system; you may also need to install dependencies manually.
 
 Or manually intall the package
 ```sh
-git clone https://github.com/zhengxwen/gds2bgen
+git clone https://github.com/CoreArray/gds2bgen
 cd gds2bgen/src
 unzip bgen_v1.1.8.zip
 cd bgen_v1.1.8
