@@ -31,6 +31,9 @@ $(SHLIB): libbgen.a libzstd.a
 
 
 libbgen.a: $(BGEN_DIR)
+	@echo "Python: $(PYTHON)"
+	@echo "CC = ${CC}"
+	@echo "CXX = ${CXX}"
 	cd $(BGEN_DIR) && $(PYTHON) ./waf configure --check-c-compiler="${CC}" --check-cxx-compiler="${CXX}" && $(PYTHON) ./waf
 	cp -f $(BGEN_DIR)/build/libbgen.a .
 	cp -f $(BGEN_DIR)/build/3rd_party/zstd-1.1.0/libzstd.a .
